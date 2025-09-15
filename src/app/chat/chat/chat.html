@@ -1,0 +1,19 @@
+<!-- Toast messages will appear here -->
+<p-toast></p-toast>
+<div class="chat-container">
+  <div class="chat-messages" #chatContainer>
+    <app-message-list [messages]="messages$ | async" (actionSelected)="handleAction($event)"></app-message-list>
+  </div>
+
+  <!-- Sticky input wrapper at bottom -->
+  <div class="input-wrapper">
+    <!-- Typing indicator (left aligned) -->
+    <div *ngIf="typing$ | async" class="typing-indicator">
+       <small>Assistant is typing...</small>
+      <!-- <p-progressSpinner styleClass="p-mr-2" strokeWidth="4" style="width:20px;height:20px"></p-progressSpinner> -->
+     
+    </div>
+
+    <app-message-input (send)="onSendMessage('0',$event,'')"></app-message-input>
+  </div>
+</div>

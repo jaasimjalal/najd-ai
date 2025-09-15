@@ -1,0 +1,23 @@
+<div class="p-mt-2 card-container" *ngIf="card">
+  <p-card>
+    <ng-container *ngFor="let element of card.body">
+      <div *ngIf="element.type === 'TextBlock'" class="text-block">
+        <strong *ngIf="element.weight==='Bolder'">{{ element.text }}</strong>
+        <span *ngIf="element.weight!=='Bolder'">{{ element.text }}</span>
+      </div>
+
+      <div *ngIf="element.type === 'Input.Text'" class="input-text">
+        <input pInputText [placeholder]="element.placeholder" />
+      </div>
+    </ng-container>
+
+    <div class="actions" *ngIf="card.actions?.length">
+      <button *ngFor="let act of card.actions"
+              pButton
+              [label]="act.title"
+              class="p-mr-2 p-button-sm"
+              (click)="handleAction(act)">
+      </button>
+    </div>
+  </p-card>
+</div>

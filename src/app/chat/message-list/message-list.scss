@@ -1,0 +1,277 @@
+/* ---------------------------------- */
+/* Message Card Wrapper */
+.message-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px; /* space between avatar and content */
+  margin-bottom: 12px; /* vertical space between messages */
+}
+
+/* Optional extra spacing if consecutive messages are different roles */
+.message-card + .message-card {
+  margin-top: 8px;
+}
+
+/* Avatar */
+.message-avatar {
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.avatar-user {
+  background-color: #0078d4;
+  color: white;
+}
+
+.avatar-bot {
+  background-color: #e6e6e6;
+}
+
+/* Message Body */
+.message-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  max-width: 90%;
+}
+
+/* Header (name + time) */
+.message-meta {
+  font-size: 0.75rem;
+  color: gray;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  padding: 0 4px;
+}
+
+.message-meta .name {
+  font-weight: 600;
+  margin-right: 8px;
+}
+
+.message-meta .time {
+  color: #999;
+}
+
+/* ---------------------------------- */
+/* Bubble Styling */
+/* User Message */
+.message-card.user .message-content {
+  background-color: #f3f2f1;
+  padding: 2px 12px; /* smaller padding for user */
+  border-radius: 8px;
+  word-break: break-word;
+  align-self: flex-end;
+}
+
+/* Bot Message */
+.message-card.bot .message-content {
+  background-color: #f3f2f1;
+  padding: 8px 12px; /* larger padding for bot */
+  border-radius: 8px;
+  word-break: break-word;
+  align-self: flex-start;
+}
+
+/* Message Text */
+.message-text pre {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+/* ---------------------------------- */
+/* Bot Actions */
+.message-actions {
+  margin-top: 6px;
+  display: flex;
+  gap: 8px;
+}
+
+.message-actions .p-button {
+  padding: 4px;
+  height: 28px;
+  width: 28px;
+  border-radius: 50%;
+  color: #666;
+}
+
+.message-actions .p-button:hover {
+  background-color: #f0f0f0;
+}
+
+/* ---------------------------------- */
+/* Suggested Actions Buttons */
+.suggested-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+/* Default button (id == 0) */
+.suggested-btn {
+  background-color: #f3f2f1;   /* Teams light gray */
+  color: #252423;
+  border: 1px solid #d1d1d1;
+  border-radius: 4px;
+  padding: 6px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.suggested-btn:hover {
+  background-color: #e1dfdd;
+  border-color: #c8c6c4;
+}
+
+/* Teams button (id != 0) */
+.teams-btn {
+  background-color: #0078d4;  /* Teams blue */
+  color: #fff;
+  border: 1px solid #0078d4;
+    border-radius: 4px;
+  padding: 6px 14px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out
+}
+
+.teams-btn:hover {
+  background-color: #106ebe;
+  border-color: #106ebe;
+}
+
+.teams-btn:active {
+  background-color: #005a9e;
+  border-color: #005a9e;
+}
+
+
+/* ---------------------------------- */
+/* Markdown Tables (Rounded & RTL) */
+markdown ::ng-deep table {
+  border-collapse: separate; /* necessary for rounded corners */
+  border-spacing: 0;
+  width: 100%;
+  border: 1px solid #d0d0d0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Table Cells */
+markdown ::ng-deep th,
+markdown ::ng-deep td {
+  border-bottom: 1px solid #d0d0d0;
+  border-right: 1px solid #d0d0d0;
+  padding: 8px 12px;
+  text-align: right; /* RTL support */
+  background: #fff;
+}
+
+/* Remove right border on last column */
+markdown ::ng-deep tr th:last-child,
+markdown ::ng-deep tr td:last-child {
+  border-right: none;
+}
+
+/* Remove bottom border on last row */
+markdown ::ng-deep tr:last-child td {
+  border-bottom: none;
+}
+
+/* Rounded corners for each corner */
+markdown ::ng-deep tr:first-child th:first-child {
+  border-top-left-radius: 12px;
+}
+
+markdown ::ng-deep tr:first-child th:last-child {
+  border-top-right-radius: 12px;
+}
+
+markdown ::ng-deep tr:last-child td:first-child {
+  border-bottom-left-radius: 12px;
+}
+
+markdown ::ng-deep tr:last-child td:last-child {
+  border-bottom-right-radius: 12px;
+}
+
+.avatar-wrapper {
+  position: relative;
+  display: inline-block;
+
+  .custom-tooltip {
+    visibility: hidden;
+    width: 350px;
+    background-color: #fff;
+    color: #333;
+    text-align: left; /* RTL support */
+    font-family: 'Noto Sans', sans-serif;
+    font-size: 12px;
+    line-height: 1.3;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    border-radius: 12px;
+    position: absolute;
+    top: 0;       /* align to top of avatar */
+    left: 110%;   /* display to the right of avatar */
+    transform: none;
+    z-index: 1000;
+    padding: 12px;
+  }
+
+  &:hover .custom-tooltip {
+    visibility: visible;
+  }
+
+  .tooltip-header {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 4px; /* reduced from 8px to 4px */
+  }
+
+  .tooltip-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+  }
+
+  .tooltip-description {
+    margin: 0 0 4px 0; /* reduced top margin to 0 */
+    font-size: 14px;
+    text-justify: inter-word;
+    text-align: right;
+  }
+
+  .tooltip-body {
+    padding-top: 8px;  /* space below description */
+    border-top: 1px solid #eee; /* optional divider */
+  }
+
+  ul {
+    margin: 4px 0 8px 0;
+    padding-left: 16px;
+  }
+}
+
+
+.thumbs-up-active {
+  color: #4caf50 !important; /* green highlight */
+  font-weight: bolder;
+}
+
+.thumbs-down-active {
+  color: #f44336 !important; /* red highlight */
+  font-weight: bolder;
+}
+
+
+
+
+
+
+

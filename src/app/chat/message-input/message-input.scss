@@ -1,0 +1,97 @@
+.message-input-wrapper {
+  width: 100%;
+  padding: 6px 10px;  /* tighter padding */
+  box-sizing: border-box;
+  margin-bottom: 3vh;          /* remove extra margin below typing indicator */
+}
+
+/* Shared input box */
+.input-box {
+  position: relative;
+  width: 100%;
+}
+
+/* Textarea styling */
+.input-field {
+  width: 100%;
+  min-height: 40px;
+  max-height: 100px;   /* prevent oversized input */
+  padding: 8px 50px 8px 10px; /* space for icons on the right */
+  box-sizing: border-box;
+  resize: none;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: #0078d4; /* Teams blue */
+  box-shadow: 0 0 0 1px #0078d4;
+}
+
+/* Editor wrapper */
+.editor-wrapper {
+  position: relative;
+}
+
+/* Editor styling */
+.p-editor {
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.p-editor:focus {
+  outline: none;
+  border-color: #0078d4;
+  box-shadow: 0 0 0 1px #0078d4;
+}
+
+/* Placeholder overlay */
+.editor-placeholder {
+  position: absolute;
+  top: 50px;
+  left: 12px;
+  color: #999;
+  pointer-events: none;
+  font-size: 14px;
+}
+
+/* Action icons positioning */
+.action-icons {
+  position: absolute;
+  top: 40%;
+  right: 8px;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 6px;
+}
+
+.action-icons button {
+  background-color: transparent;
+  border: none;
+  color: #555;
+  height: 28px;
+  width: 28px;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.action-icons button:hover {
+  background-color: #f3f2f1; /* Teams light gray hover */
+}
+
+/* Send button bigger and blue like Teams */
+.send-btn {
+  height: 32px;
+  width: 32px;
+  color: white;
+  background-color: #0078d4;
+  border-radius: 50%;
+}
+
+.send-btn:hover {
+  background-color: #106ebe;
+}

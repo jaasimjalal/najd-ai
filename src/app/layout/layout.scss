@@ -1,0 +1,105 @@
+/* Layout wrapper */
+.layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.logo svg {
+  height: 32px;
+  width: auto;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #6264a7;
+  color: white;
+  padding: 0 16px;
+  height: 60px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Body containing sidebar and main content */
+.body {
+  display: flex;
+  flex: 1; /* fill remaining space */
+  height: calc(100vh - 60px);
+}
+
+/* Sidebar */
+.sidebar {
+  width: 60px; /* fixed width */
+  background-color: #2b2c3b;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 16px;
+}
+
+/* Sidebar buttons */
+.sidebar .p-button {
+  margin-bottom: 16px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%; /* default circular */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+  background-color: transparent !important;
+  color: white !important;
+  border: none !important;
+}
+
+/* Hover / active state for unselected buttons */
+.sidebar .p-button:not(.selected):hover,
+.sidebar .p-button:not(.selected):active {
+  background-color: transparent !important;
+  color: white !important;
+}
+
+/* Selected state: C-shaped left rounded */
+.sidebar .p-button.selected {
+  background-color: #ffffff !important;  /* white background */
+  color: #2b2c3b !important;            /* icon color dark */
+  border-radius: 50px 0 0 50px !important; /* C-shape left rounded */
+  width: 50px !important;                /* new expanded width */
+  z-index: 1;
+  margin-left: 20px;                        /* keep left edge fixed */
+  transition: width 0.3s ease;           /* smooth width expansion */
+}
+
+/* Sidebar icons */
+.sidebar .p-button img.sidebar-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  transition: transform 0.2s ease;
+}
+
+/* Slightly enlarge icon when selected */
+.sidebar .p-button.selected img.sidebar-icon {
+  transform: scale(1.1);
+}
+
+/* Main content/chat area */
+.main-content {
+  flex: 1;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  padding: 40px; /* padding inside chat */
+  box-sizing: border-box;
+  position: relative;
+}

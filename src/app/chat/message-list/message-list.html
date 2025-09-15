@@ -1,0 +1,87 @@
+<div class="message-list">
+  <ng-container *ngFor="let m of messages; let i = index">
+    <div [ngClass]="['message-card', m.from.role === 'user' ? 'user' : 'bot']">
+
+      <!-- Avatar -->
+      <div class="message-avatar">
+        <p-avatar *ngIf="m.from.role === 'user'" icon="pi pi-user" shape="circle" styleClass="avatar-user">
+        </p-avatar>
+
+        <div class="avatar-wrapper">
+          <p-avatar *ngIf="m.from.role === 'bot'" [image]="'assets/najd.png'" shape="circle" styleClass="avatar-bot">
+          </p-avatar>
+
+          <div class="custom-tooltip">
+            <div class="tooltip-header">
+              <img src="assets/najd.png" class="tooltip-avatar" />
+              <strong>Najd | نجد</strong>
+            </div>
+
+            <p class="tooltip-description">
+              الموظفة الذكية لقطاع رأس المال البشري، دائمًا هنا لمساعدتك!
+            </p>
+
+            <div class="tooltip-body">
+              <strong>App features:</strong>
+              <ul>
+                <li>Bots: Complete tasks, find info, and chat using prompts</li>
+                <li>Created by: <a href="#" target="_blank">ELM Company</a></li>
+              </ul>
+
+              <strong>Permissions:</strong>
+              <ul>
+                <li>Receive messages and data that I provide to it.</li>
+                <li>Send me messages and notifications.</li>
+                <li>Access profile info such as name, email, company name, and language.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+
+      <!-- Content -->
+      <div class="message-content-wrapper">
+        <!-- Header (name + time) -->
+        <div class="message-meta">
+          <span class="name">{{ m.from.name }}</span>
+          <small class="time">{{ m.createdAt | date:'shortTime' }}</small>
+        </div>
+
+        <!-- Message bubble -->
+        <div class="message-content">
+          <div class="message-text" [attr.dir]="getTextDirection(m.text || '')">
+            <markdown [data]="m.text"></markdown>
+          </div>
+          <div class="suggested-actions" *ngIf=" m.suggestedActions?.length">
+            <button *ngFor="let action of m.suggestedActions"
+              [ngClass]="action.id !== '0' ? 'teams-btn' : 'suggested-btn'"
+              (click)="onSuggestedActionClick(action.id, action.label,action.object)">
+              {{ action.label }}
+            </button>
+          </div>
+        </div>
+
+        <!-- ✅ Actions (only for bot) -->
+        <div class="message-actions" *ngIf="m.from.role === 'bot'">
+
+          <!-- Thumbs Up -->
+          <button pButton pTooltip="Like" icon="pi pi-thumbs-up" class="p-button-text"
+            [ngClass]="{'thumbs-up-active': m.feedback === 'up'}" (click)="onFeedback(m, i, 'up')"></button>
+
+          <!-- Thumbs Down -->
+          <button pButton pTooltip="Dislike" icon="pi pi-thumbs-down" class="p-button-text"
+            [ngClass]="{'thumbs-down-active': m.feedback === 'down'}" (click)="onFeedback(m, i, 'down')"></button>
+
+          <!-- Other action buttons -->
+          <button pButton pTooltip="Copy" icon="pi pi-copy" class="p-button-text" (click)="copyText(m.text)"></button>
+          <button pButton pTooltip="Share" icon="pi pi-share-alt" class="p-button-text"></button>
+        </div>
+
+
+      </div>
+
+    </div>
+  </ng-container>
+</div>

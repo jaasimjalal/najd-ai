@@ -1,0 +1,44 @@
+<div class="message-input-wrapper">
+
+  <!-- Textarea -->
+  <div class="input-box" *ngIf="!showEditor">
+    <textarea
+      pInputTextarea
+      [(ngModel)]="value"
+      placeholder="Type a message"
+      (keydown)="onKeyDown($event)"
+      class="input-field">
+    </textarea>
+
+    <!-- Action Icons inside -->
+    <div class="action-icons">
+      <button pButton type="button" icon="pi pi-paperclip" class="p-button-text" (click)="onFileClick()"></button>
+      <button pButton type="button" icon="pi pi-pencil" class="p-button-text" (click)="toggleEditor()"></button>
+      <button pButton type="button" icon="pi pi-send" class="p-button-rounded p-button-primary send-btn" (click)="sendMessage()"></button>
+    </div>
+  </div>
+
+  <!-- Rich Editor -->
+  <div class="input-box" *ngIf="showEditor">
+    <div class="editor-wrapper">
+      <p-editor
+        [(ngModel)]="value"
+        [style]="{ height: '100px', width: '100%' }"
+        (onTextChange)="onEditorChange($event)">
+      </p-editor>
+
+      <!-- Placeholder -->
+      <div class="editor-placeholder" *ngIf="!value">
+        Type a message
+      </div>
+    </div>
+
+    <!-- Action Icons inside the editor -->
+    <div class="action-icons editor-icons">
+      <button pButton type="button" icon="pi pi-paperclip" class="p-button-text" (click)="onFileClick()"></button>
+      <button pButton type="button" icon="pi pi-pencil" class="p-button-text" (click)="toggleEditor()"></button>
+      <button pButton type="button" icon="pi pi-send" class="p-button-rounded p-button-primary send-btn" (click)="sendMessage()"></button>
+    </div>
+  </div>
+
+</div>
