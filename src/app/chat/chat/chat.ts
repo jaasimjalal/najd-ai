@@ -31,14 +31,25 @@ export class Chat implements AfterViewChecked, OnDestroy {
 
   @ViewChild('chatContainer') private chatContainer!: ElementRef;
   private conversationId: string;
+  private userId: any
   constructor(private chatService: ChatService, private messageService: MessageService) {
 
     const storedId = sessionStorage.getItem('conversationId');
+    const userid = sessionStorage.getItem('userId');
     if (storedId) {
       this.conversationId = storedId;
+      
     } else {
       this.conversationId = this.generateRandomId();
       sessionStorage.setItem('conversationId', this.conversationId);
+      
+    }
+
+    if (userid) {
+      this.userId=userid
+    } else {
+      this.userId=this.generateRandomId()
+      sessionStorage.setItem('userId', this.userId);
     }
    }
 
@@ -134,7 +145,7 @@ export class Chat implements AfterViewChecked, OnDestroy {
     
     const payload: ChatRequest = {
       question: text,
-      userId: '1',
+      userId: this.userId,
       messageId: this.generateRandomId(),
       userName: 'Yasser Alomar',
       conversationId: this.conversationId,
@@ -230,4 +241,5 @@ export class Chat implements AfterViewChecked, OnDestroy {
   generateRandomId(): string {
   return Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
 }
+
 }
