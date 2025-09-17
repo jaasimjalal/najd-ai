@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { Observable, take } from 'rxjs';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, AfterViewChecked, OnDestroy } from '@angular/core';
+import { Observable, Subject, take } from 'rxjs';
 import { ImportsModule } from '../../imports';
 import { ChatService, ChatMessage, ChatRequest } from '../services/chat';
 import { MessageList } from '../message-list/message-list';
@@ -25,7 +25,7 @@ interface BotResponse {
   templateUrl: './chat.html',
   styleUrls: ['./chat.scss']
 })
-export class Chat implements OnInit , AfterViewInit {
+export class Chat implements AfterViewChecked, OnDestroy {
   messages$!: Observable<ChatMessage[]>;
   typing$!: Observable<boolean>;
 
@@ -47,19 +47,34 @@ export class Chat implements OnInit , AfterViewInit {
     this.typing$ = this.chatService.getTyping();
   }
 
-  ngAfterViewInit() {
-    // Scroll to bottom on new messages
-    this.messages$.subscribe(() => {
-      setTimeout(() => this.scrollToBottom(), 50);
-    });
+  // ngAfterViewInit() {
+  //   // Scroll to bottom on new messages
+  //   // this.messages$.subscribe(() => {
+  //   //   setTimeout(() => this.scrollToBottom(), 50);
+  //   // });
+  // }
+ private shouldScrollToBottom = false;
+  private destroy$ = new Subject<void>();
+  ngAfterViewChecked(): void {
+    if (this.shouldScrollToBottom) {
+      this.scrollToBottom();
+      this.shouldScrollToBottom = false;
+    }
   }
-
   private scrollToBottom(): void {
     try {
-      this.chatContainer.nativeElement.scrollTop = this.chatContainer.nativeElement.scrollHeight;
+      if (this.chatContainer?.nativeElement) {
+        const element = this.chatContainer.nativeElement;
+        element.scrollTop = element.scrollHeight;
+      }
     } catch (err) {
-      console.error('Scroll error:', err);
+      console.error('Error scrolling to bottom:', err);
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   // Detect RTL/LTR
@@ -181,7 +196,7 @@ export class Chat implements OnInit , AfterViewInit {
         // Add bot message
         this.chatService.addMessage({
           id: this.generateRandomId(),
-          from: { role: 'bot', name: 'Najd | نجد' },
+          from: { role: 'bot', name: 'Roaa | رؤى' },
           text: botText,
           createdAt: new Date(),
           suggestedActions,

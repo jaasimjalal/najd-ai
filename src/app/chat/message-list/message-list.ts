@@ -31,7 +31,7 @@ export class MessageList {
 
     this.chatService.addMessage({
       id: Date.now().toString(),
-      from: { role: 'bot', name: 'Najd | نجد' },
+      from: { role: 'bot', name: 'Roaa | رؤى' },
       text: marked.parse(` **مرحبًا**  !🙋‍♀️
 
 أنا **نجد**، مساعدتك الافتراضية في مجموعة التخطيط والتمكين المؤسسي.  

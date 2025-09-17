@@ -28,7 +28,7 @@ export interface ChatRequest {
 @Injectable({ providedIn: 'root' })
 export class ChatService {
 
-  private apiUrl = 'http://150.230.175.171:8100/';
+  private apiUrl = 'http://164.90.239.18:8100/';
 
   constructor(private http: HttpClient) { }
 
@@ -59,7 +59,7 @@ export class ChatService {
       this.typing$.next(false);
       this.addMessage({
         id: Date.now().toString(),
-        from: { role: 'bot', name: 'Najd | نجد' },
+        from: { role: 'bot', name: 'Roaa | رؤى' },
         text: `${userText}`,
         createdAt: new Date(),
         suggestedActions: [],
