@@ -14,7 +14,7 @@ interface DisplayParam {
 interface BotResponse {
   id?: string;
   question?: string;
-  display_params?: DisplayParam[];
+  display_params: DisplayParam[];
   suggestedActions?: string[];
 }
 
@@ -25,10 +25,10 @@ interface BotResponse {
   templateUrl: './chat.html',
   styleUrls: ['./chat.scss']
 })
-export class Chat implements AfterViewChecked, OnDestroy {
+export class Chat implements OnInit, AfterViewInit {
   messages$!: Observable<ChatMessage[]>;
   typing$!: Observable<boolean>;
-
+  isLoading = false;
   @ViewChild('chatContainer') private chatContainer!: ElementRef;
   private conversationId: string;
   private userId: any
@@ -38,54 +38,40 @@ export class Chat implements AfterViewChecked, OnDestroy {
     const userid = sessionStorage.getItem('userId');
     if (storedId) {
       this.conversationId = storedId;
-      
+
     } else {
       this.conversationId = this.generateRandomId();
       sessionStorage.setItem('conversationId', this.conversationId);
-      
+
     }
 
     if (userid) {
-      this.userId=userid
+      this.userId = userid
     } else {
-      this.userId=this.generateRandomId()
+      this.userId = this.generateRandomId()
       sessionStorage.setItem('userId', this.userId);
     }
-   }
+  }
 
   ngOnInit() {
     this.messages$ = this.chatService.getMessages();
     this.typing$ = this.chatService.getTyping();
   }
 
-  // ngAfterViewInit() {
-  //   // Scroll to bottom on new messages
-  //   // this.messages$.subscribe(() => {
-  //   //   setTimeout(() => this.scrollToBottom(), 50);
-  //   // });
-  // }
- private shouldScrollToBottom = false;
-  private destroy$ = new Subject<void>();
-  ngAfterViewChecked(): void {
-    if (this.shouldScrollToBottom) {
-      this.scrollToBottom();
-      this.shouldScrollToBottom = false;
-    }
+  ngAfterViewInit() {
+    // Scroll to bottom on new messages
+    this.messages$.subscribe(() => {
+      setTimeout(() => this.scrollToBottom(), 50);
+    });
   }
-  private scrollToBottom(): void {
-    try {
-      if (this.chatContainer?.nativeElement) {
+  scrollToBottom(): void {
+    if (this.chatContainer?.nativeElement) {
+      // Use requestAnimationFrame to ensure DOM has rendered
+      requestAnimationFrame(() => {
         const element = this.chatContainer.nativeElement;
         element.scrollTop = element.scrollHeight;
-      }
-    } catch (err) {
-      console.error('Error scrolling to bottom:', err);
+      });
     }
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
   }
 
   // Detect RTL/LTR
@@ -142,7 +128,7 @@ export class Chat implements AfterViewChecked, OnDestroy {
   onSendMessage(id: string, text: string, object: any) {
     if (!text.trim()) return;
 
-    
+
     const payload: ChatRequest = {
       question: text,
       userId: this.userId,
@@ -152,9 +138,26 @@ export class Chat implements AfterViewChecked, OnDestroy {
       questionTimestamp: new Date().toISOString()
     };
 
+    // Centralized mappings
+            const valueMappings: Record<string, string> = {
+              // Leave types
+              SAU_ANN: "إجازة سنوية",
+              SAU_SICK: "إجازة مرضية",
+              SAU_PAT: "إجازة أبوة",
+              SAU_MAT: "إجازة أمومة",
+              ZEXAM_LV: "إجازة الاختبارات",
+
+              // Attachments
+              None: "لا يوجد",
+
+              // Working types
+              working_hours: "ساعات العمل",
+              overtime: "ساعات إضافية",
+            };
+
     if (id !== "0") {
 
-      console.log(object.parameters.tool_name)
+
       payload.question = object.parameters.tool_name
       payload.interruptResponse = 'yes';
       payload.interruptId = id;
@@ -165,81 +168,150 @@ export class Chat implements AfterViewChecked, OnDestroy {
         from: { role: 'user', name: 'You' },
         text,
         createdAt: new Date(),
-        feedback:''
+        feedback: ''
       });
     }
 
+    console.log(object)
+    this.isLoading = true;
+    let suggestedActions: any[] = [];
+    if (!object || !object.parameters || object.parameters.tool_name !== "submit_leave_request") {
+      this.chatService.sendMessage(payload).subscribe({
+        next: (res: any) => {
+          let botText: string;
+
+          this.isLoading = false;
+          if (typeof res === 'string') {
+            console.log('Response is a string ✅:', res);
+            botText = res;
+          } else if (typeof res === 'object' && res !== null) {
+            console.log('Response is an object ✅:', res);
+
+            const obj = res as BotResponse;
+            //   suggestedActions = [
+            // 'نعم, هذه المعلومات صحيحة'];
+
+            suggestedActions.push({ id: obj.id, label: 'نعم, هذه المعلومات صحيحة', object: obj })
 
 
-    this.chatService.sendMessage(payload).subscribe({
-      next: (res: any) => {
-        let botText: string;
-        let suggestedActions: any[] = [];
 
-        if (typeof res === 'string') {
-          console.log('Response is a string ✅:', res);
-          botText = res;
-        } else if (typeof res === 'object' && res !== null) {
-          console.log('Response is an object ✅:', res);
+            
 
-          const obj = res as BotResponse;
-          //   suggestedActions = [
-          // 'نعم, هذه المعلومات صحيحة'];
+            // Name translations (field names)
+            const nameMappings: Record<string, string> = {
+              attachment: "مرفقات",
+              working_type: "نوع العمل",
+              date: "التاريخ",
+              start_time: "وقت البداية",
+              end_time: "وقت النهاية",
+              "نوع الإجازة": "نوع الإجازة", // keep as is
+            };
 
-          suggestedActions.push({ id: obj.id, label: 'نعم, هذه المعلومات صحيحة', object: obj })
+            console.log('Display Params:', obj.display_params);
 
+            // Transformation logic
+            const extractedJson: BotResponse = {
+              id: obj.id ?? '',
+              question: obj.question ?? '',
+              display_params: Array.isArray(obj.display_params)
+                ? obj.display_params
+                  // remove "الأداة"
+                  .filter((param: DisplayParam) => param.name.trim() !== "الأداة")
+                  // translate names and values
+                  .map((param: DisplayParam) => {
+                    const cleanName = param.name.trim();
+                    const cleanValue = param.value.trim();
 
+                    return {
+                      name: nameMappings[cleanName] ?? cleanName, // translate field name
+                      value: valueMappings[cleanValue] ?? cleanValue, // translate field value
+                    };
+                  })
+                : [],
+            };
 
-          // Extract needed fields
-          const extractedJson: BotResponse = {
-            id: obj.id || '',
-            question: obj.question || '',
-            display_params: obj.display_params || [],
-          };
+            console.log('Extracted JSON:', extractedJson);
 
-          botText = this.formatMessage(extractedJson);
-        } else {
-          console.warn('Response is neither string nor object:', res);
-          botText = '';
+            botText = this.formatMessage(extractedJson);
+          } else {
+            console.warn('Response is neither string nor object:', res);
+            botText = '';
+          }
+          this.chatService.setTyping(false);
+
+          // Add bot message
+          this.chatService.addMessage({
+            id: this.generateRandomId(),
+            from: { role: 'bot', name: 'Roaa | رؤى' },
+            text: botText,
+            createdAt: new Date(),
+            suggestedActions,
+            feedback: ''
+          });
+
+        },
+        error: (err: any) => {
+          this.chatService.setTyping(false);  // ✅ stop typing
+          //  console.error('Error:', err);
+          this.isLoading = false;
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Request Failed',
+            detail: 'There is a problem with your request. Please try again.',
+            life: 5000 // 5 seconds
+          });
+          // Remove the failed user message
+          this.messages$.pipe(take(1)).subscribe(messages => {
+            if (messages.length > 0 && messages[messages.length - 1].from.role == 'user') {
+              const lastId = messages[messages.length - 1].id;
+              console.log('Last message ID:', lastId);
+              console.log(messages[messages.length - 1].from.role)
+              this.chatService.removeMessage(lastId);
+            }
+          });
+
         }
+      });
+    } else if (object && object.parameters && object.parameters.tool_name === "submit_leave_request") {
+      this.isLoading = true;
+      this.chatService.setTyping(true);
+      // Extract the dates
+      const start = object.parameters.tool_args.date_from;
+      const end = object.parameters.tool_args.date_to;
+      const leaveTypeKey = object.parameters.tool_args.leave_type; // e.g., "SAU_ANN"
+
+      // Map the leave type key to its display name
+      const leaveType = valueMappings[leaveTypeKey] || leaveTypeKey;
+
+      // Construct the dynamic bot message
+      const botMessageText = `تم رفع طلب ${leaveType} لك من تاريخ ${start} الى تاريخ ${end} بنجاح`;
+
+      // Construct dynamic bot message
+     
+      // Delay 10–15 seconds (randomized if you want)
+      const delay = Math.floor(Math.random() * (15000 - 10000 + 1)) + 10000; // random between 10000 and 15000 ms
+
+      setTimeout(() => {
+        // Hide loading
+        this.isLoading = false;
         this.chatService.setTyping(false);
 
         // Add bot message
         this.chatService.addMessage({
           id: this.generateRandomId(),
           from: { role: 'bot', name: 'Roaa | رؤى' },
-          text: botText,
+          text: botMessageText,
           createdAt: new Date(),
           suggestedActions,
-          feedback:''
+          feedback: ''
         });
+      }, delay);
+    }
 
-      },
-      error: (err: any) => {
-        this.chatService.setTyping(false);  // ✅ stop typing
-        //  console.error('Error:', err);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Request Failed',
-          detail: 'There is a problem with your request. Please try again.',
-          life: 5000 // 5 seconds
-        });
-        // Remove the failed user message
-        this.messages$.pipe(take(1)).subscribe(messages => {
-          if (messages.length > 0 && messages[messages.length - 1].from.role=='user') {
-            const lastId = messages[messages.length - 1].id;
-            console.log('Last message ID:', lastId);
-            console.log(messages[messages.length - 1].from.role)
-            this.chatService.removeMessage(lastId);
-          }
-        });
-        
-      }
-    });
   }
 
   generateRandomId(): string {
-  return Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
-}
+    return Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
+  }
 
 }

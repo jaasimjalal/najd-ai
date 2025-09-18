@@ -149,6 +149,15 @@
   border-color: #005a9e;
 }
 
+.typing-text {
+  display: block;
+  padding: 0.5rem 1rem;
+  margin-bottom: 0.5rem;
+  // background: #f5f5f5;  /* light gray background */
+  color: #a8a8a8;          /* darker gray text */
+  font-weight: 700;      /* bolder text */
+  border-radius: 12px;
+}
 
 /* ---------------------------------- */
 /* Markdown Tables (Rounded & RTL) */

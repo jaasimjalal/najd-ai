@@ -22,11 +22,11 @@ export class MessageList {
   @Input() messages: ChatMessage[] | null = [];
   @Output() actionSelected = new EventEmitter<{ id: string, label: string, object: any }>();
 
-
+ 
   keys(obj: any) {
     return Object.keys(obj || {});
   }
-
+  @Input() isLoading: boolean = false;
   constructor(private chatService: ChatService,private messageService: MessageService) {
 
     this.chatService.addMessage({

@@ -14,7 +14,7 @@
           <div class="custom-tooltip">
             <div class="tooltip-header">
               <img src="assets/najd.png" class="tooltip-avatar" />
-              <strong>Roaa  | رؤى</strong>
+              <strong>Roaa | رؤى</strong>
             </div>
 
             <p class="tooltip-description">
@@ -84,4 +84,29 @@
 
     </div>
   </ng-container>
+
+  <div *ngIf="isLoading" class="message-card bot">
+    <!-- Bot avatar -->
+    <div class="message-avatar">
+      <p-avatar [image]="'assets/najd.png'" shape="circle" styleClass="avatar-bot"></p-avatar>
+    </div>
+
+    <!-- Skeleton content -->
+    <div class="message-content-wrapper">
+      <!-- Typing text -->
+      <div class="message-meta">
+        <span class="name">Roaa | رؤى</span>
+        <!--<small class="time">{{ now | date:'shortTime' }}</small>-->
+      </div>
+      <div class="message-text" dir="rtl">
+        <span class="typing-text">لحظات ياسر، قاعدين نرفع طلبك...</span>
+
+        <p-skeleton class="mb-2" borderRadius="16px"></p-skeleton>
+        <p-skeleton width="10rem" class="mb-2" borderRadius="16px"></p-skeleton>
+        <p-skeleton width="5rem" class="mb-2" borderRadius="16px"></p-skeleton>
+        <p-skeleton height="2rem" class="mb-2" borderRadius="16px"></p-skeleton>
+        <p-skeleton width="10rem" height="4rem" borderRadius="16px"></p-skeleton>
+      </div>
+    </div>
+  </div>
 </div>

@@ -2,7 +2,7 @@
 <p-toast></p-toast>
 <div class="chat-container">
   <div class="chat-messages" #chatContainer>
-    <app-message-list [messages]="messages$ | async" (actionSelected)="handleAction($event)"></app-message-list>
+    <app-message-list [messages]="messages$ | async" (actionSelected)="handleAction($event)"  [isLoading]="isLoading"></app-message-list>
   </div>
 
   <!-- Sticky input wrapper at bottom -->
